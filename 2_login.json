@@ -1,0 +1,181 @@
+{
+	"info": {
+		"_postman_id": "d60bdce1-aea2-425a-ba63-3d0eb46cfdee",
+		"name": "2_login",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21367442"
+	},
+	"item": [
+		{
+			"name": "login success",
+			"item": [
+				{
+					"name": "signup - success",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//console.log(\"Passei aqui antes de fazer a requisição!!!\")\r",
+									"function firstName() {\r",
+									"    let firstName = [\"William\", \"Jefferson\",\"João\", \"Elaine\", \"Mateus\", \"Ana\", \"Lais\", \"Johana\", \"Yonatan\", \"Geovan\", \"Pablo\", \"Renan\", \"Robson\", \"Rodrigo\", \"Matheus\", \"Victor\"];\r",
+									"    let randomItem = firstName[Math.floor(Math.random() * firstName.length)]\r",
+									"    return randomItem\r",
+									"}\r",
+									"//setendo o firstName em uma variavel de ambiente do Postman\r",
+									"//Passei a variavel começando com a letra maiuscula para diferenciar variavel de codigo(camel_case)e variavel de ambiente\r",
+									"pm.environment.set(\"FirstName\", firstName());\r",
+									"\r",
+									"function lastName() {\r",
+									"    let lastName = [\"Alves\", \"Mendes\",\"Palagio\", \"Argolo\", \"Senna\", \"Pesluci\", \"Moura\", \"Meza\", \"Ylla\", \"Lima\", \"Boldrini\", \"Rinardi\", \"Silva\", \"Bernardi\", \"Massini\", \"Luz\", \"Paggio\", \"Barros\"];\r",
+									"    let randomItem = lastName[Math.floor(Math.random() * lastName.length)]\r",
+									"    return randomItem\r",
+									"}\r",
+									"\r",
+									"pm.environment.set(\"LastName\", lastName());\r",
+									"//na flecha ao lado embaixo de cookies pego a função criada ja \"Get an enviroment variable\"\r",
+									"//Concatenando para gerar o Fullname.\r",
+									"pm.environment.set(\"FullName\", pm.environment.get(\"FirstName\")+ \" \" + pm.environment.get(\"LastName\"));\r",
+									"\r",
+									"function accessProfile() {\r",
+									"    let accessProfile = [\"ADMIN\", \"FINANCEIRO\", \"ADMINISTRATIVO\", \"TI\", \"CONTROLADORIA\"];\r",
+									"    let randomItem = accessProfile[Math.floor(Math.random() * accessProfile.length)]\r",
+									"    return randomItem\r",
+									"} \r",
+									"pm.environment.set(\"AccessProfile\", accessProfile());\r",
+									"\r",
+									"function providerMail() {\r",
+									"    let providerMail = [\"@yahoo.com.br\", \"@ymail.com\", \"@gmail.com\", \"@hotmail.com\", \"@bol.com.br\", \"@uol.com\", \"@globo.com\"];\r",
+									"    let randomItem = providerMail[Math.floor(Math.random() * providerMail.length)]\r",
+									"    return randomItem\r",
+									"}\r",
+									"pm.environment.set(\"ProviderMail\", providerMail());\r",
+									"pm.environment.set(\"Mail\", pm.environment.get(\"FirstName\") + \"_\" + pm.variables.replaceIn('{{$guid}}') + pm.environment.get(\"ProviderMail\"))"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"check is token exist\", function(){\r",
+									"   pm.expect(JSON.parse(responseBody).token).to.exist;\r",
+									"})\r",
+									"//para validar se o nome completo estou capturando certo uso o to eql e pego da variavel de ambiente com pm.environment.get\r",
+									"pm.test(\"check is FullName true\", function(){\r",
+									"   pm.expect(pm.environment.get(\"FullName\")).to.eql(JSON.parse(responseBody).user.fullName);\r",
+									"})\r",
+									"pm.test(\"check is Mail true\", function(){\r",
+									"   pm.expect(pm.environment.get(\"Mail\")).to.eql(JSON.parse(responseBody).user.mail);\r",
+									"})\r",
+									"pm.test(\"check is AccessProfile true\", function(){\r",
+									"   pm.expect(pm.environment.get(\"AccessProfile\")).to.eql(JSON.parse(responseBody).user.accessProfile);\r",
+									"})\r",
+									"pm.test(\"check is status true\", function(){\r",
+									"   pm.expect(true).to.eql(JSON.parse(responseBody).user.status);\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\": \"{{FullName}}\",\r\n    \"mail\": \"{{Mail}}\",\r\n    \"password\": \"{{Password}}\",\r\n    \"confirmPassword\": \"{{Password}}\",\r\n    \"accessProfile\": \"{{AccessProfile}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/signup",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login - success",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"check is token exist\", function(){\r",
+									"   pm.expect(JSON.parse(responseBody).token).to.exist;\r",
+									"})\r",
+									"//para validar se o nome completo estou capturando certo uso o to eql e pego da variavel de ambiente com pm.environment.get\r",
+									"pm.test(\"check is FullName true\", function(){\r",
+									"   pm.expect(pm.environment.get(\"FullName\")).to.eql(JSON.parse(responseBody).user.fullName);\r",
+									"})\r",
+									"pm.test(\"check is Mail true\", function(){\r",
+									"   pm.expect(pm.environment.get(\"Mail\")).to.eql(JSON.parse(responseBody).user.mail);\r",
+									"})\r",
+									"pm.test(\"check is AccessProfile true\", function(){\r",
+									"   pm.expect(pm.environment.get(\"AccessProfile\")).to.eql(JSON.parse(responseBody).user.accessProfile);\r",
+									"})\r",
+									"pm.test(\"check is status true\", function(){\r",
+									"   pm.expect(true).to.eql(JSON.parse(responseBody).user.status);\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mail\": \"{{Mail}}\",\r\n    \"password\": \"{{Password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
